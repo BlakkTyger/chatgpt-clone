@@ -2,6 +2,8 @@
 
 The ChaGPT Clone features robust user authentication, persistent chat history.
 
+Demonstration Video can be found [here](https://drive.google.com/drive/folders/1uUhTfvLc8Yd_7cTgYusv2fro9qBfnpbk?usp=sharing)
+
 ## Setup
 
 Follow these steps to set up and run the project on your local machine. This guide is compatible with macOS, Windows (using WSL), and Linux.
