@@ -5,7 +5,7 @@ export const Header = () => {
     return (
         <div className="flex h-[100px] justify-between items-center p-5">
             <SelectModal />
-            <AnonymousToggle />
+            
         </div>
     );
 };

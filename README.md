@@ -55,9 +55,7 @@ React, TypeScript, tRPC, Supabase, Drizzle ORM, Vercel, Node, LangChain, LangGra
 
 2.  Chat Context Maintenance -> Mem0
 
-3.  Timestamps
-
-4.  Tools:
+3.  Tools:
 
     1.  Vanilla
 
@@ -73,8 +71,9 @@ React, TypeScript, tRPC, Supabase, Drizzle ORM, Vercel, Node, LangChain, LangGra
 
         3.  Observability on frontend (verbose like "Thinking...", "Fetching information from wikipedia" etc)
 
-5.  File System Integrations (Simple Retrieval + RAG pipeline will run for these documents):
+4.  File System Integrations (Simple Retrieval + RAG pipeline will run for these documents):
     1.  Knowledge base (Upload Documents)
-6.  Response Streaming
+
+5.  Response Streaming
 
 ---

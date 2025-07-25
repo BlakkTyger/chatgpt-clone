@@ -32,7 +32,8 @@ export const Form = ({ chatId }: FormProps) => {
                 },
                 body: JSON.stringify({
                     prompt: userMessage,
-                    model: currentUserModel || AIModel.GeminiFlash
+                    model: currentUserModel || AIModel.GeminiFlash,
+                    chatId: currentChatId
                 }),
             });
 

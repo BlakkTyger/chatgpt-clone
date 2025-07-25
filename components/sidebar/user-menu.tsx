@@ -1,4 +1,3 @@
-// components/sidebar/user-menu.tsx
 "use client";
 
 import { useUser } from "@/hooks/useUser";
@@ -7,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
 import { toast } from "sonner";
+import { AnonymousToggle } from "@/components/anonymous-toggle"; // ✨ 1. Import the toggle
 
 export const UserMenu = () => {
     const { user } = useUser();
@@ -17,21 +17,23 @@ export const UserMenu = () => {
         if (error) {
             toast.error("Logout failed. Please try again.");
         } else {
-            // Redirect to the auth page after successful sign-out
             router.push('/auth');
         }
     };
 
-    // Don't render the menu if the user is not loaded yet
     if (!user) {
         return null;
     }
 
     return (
-        <div className="mt-auto border-t border-neutral-800 pt-4">
-            <div className="px-2 text-sm text-neutral-400 truncate mb-2">
+        <div className="mt-auto border-t border-neutral-800 pt-4 space-y-2">
+            <div className="px-2 text-sm text-neutral-400 truncate">
                 {user.email}
             </div>
+            
+            {/* ✨ 2. Add the AnonymousToggle component here */}
+            <AnonymousToggle />
+
             <Button
                 onClick={handleLogout}
                 className="w-full flex justify-start items-center gap-3 p-2 h-auto text-sm bg-transparent hover:bg-neutral-800 text-neutral-300 hover:text-white"
