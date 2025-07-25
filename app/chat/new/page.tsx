@@ -1,4 +1,3 @@
-// app/chat/new/page.tsx
 "use client";
 
 import { Form } from "../[chatId]/_components/form";

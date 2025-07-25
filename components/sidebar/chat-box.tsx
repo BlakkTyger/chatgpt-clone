@@ -4,13 +4,13 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { ArrowDownToLine, Pencil, Trash2 } from "lucide-react";
+import { Check, Pencil, Trash2 } from "lucide-react"; // Changed icon for clarity
 import { supabase } from "@/utils/supabase/client";
 import { toast } from "sonner";
 import { Chat } from "@/types";
 
 interface ChatBoxProps {
-  chat: Chat; // Use consistent Chat type
+  chat: Chat;
   selected: boolean;
 }
 
@@ -20,7 +20,7 @@ export const ChatBox = ({ chat, selected }: ChatBoxProps) => {
   const [title, setTitle] = useState(chat.title);
 
   const handleClick = () => {
-    if (!selected) {
+    if (!isEditing && !selected) {
       router.push(`/chat/${chat.id}`);
     }
   };
@@ -31,15 +31,13 @@ export const ChatBox = ({ chat, selected }: ChatBoxProps) => {
         return;
     }
     
+    setIsEditing(false);
     const { error } = await supabase
       .from("chats")
       .update({ title: title.trim() })
       .eq("id", chat.id);
 
-    if (error) {
-      toast.error("Failed to rename chat.");
-    }
-    setIsEditing(false);
+    if (error) toast.error("Failed to rename chat.");
   };
 
   const handleDelete = async () => {
@@ -52,26 +50,17 @@ export const ChatBox = ({ chat, selected }: ChatBoxProps) => {
       toast.error("Failed to delete chat.");
     } else {
       toast.success("Chat deleted.");
-      // The real-time subscription will handle removing it from the list.
-      if (selected) {
-         router.push("/"); // Go home if the active chat was deleted
-      }
-    }
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      handleRename();
+      if (selected) router.push("/");
     }
   };
 
   return (
     <div
+      onClick={handleClick}
       className={cn(
-        "group relative flex w-full p-2 rounded-md hover:bg-neutral-900 cursor-pointer text-white text-sm items-center",
+        "group relative flex w-full p-2 rounded-md hover:bg-neutral-800 cursor-pointer text-white text-sm items-center",
         selected && "bg-neutral-800"
       )}
-      onClick={handleClick}
     >
       {isEditing ? (
         <input
@@ -79,7 +68,7 @@ export const ChatBox = ({ chat, selected }: ChatBoxProps) => {
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           onBlur={handleRename}
-          onKeyDown={handleKeyDown}
+          onKeyDown={(e) => { if (e.key === "Enter") handleRename(); }}
           autoFocus
           className="outline-none bg-transparent w-full"
         />
@@ -87,21 +76,19 @@ export const ChatBox = ({ chat, selected }: ChatBoxProps) => {
         <div className="truncate flex-1">{chat.title}</div>
       )}
 
-      {!isEditing && (
-         <div
-            className={cn(
-              "absolute top-1/2 -translate-y-1/2 right-2 flex z-10 bg-gradient-to-r from-transparent from-0% to-neutral-900 to-30% group-hover:to-neutral-900 space-x-2 pl-6 py-1",
-              selected && "to-neutral-800 group-hover:to-neutral-800"
-            )}
-          >
-            <button onClick={(e) => { e.stopPropagation(); setIsEditing(true); }}>
-              <Pencil className="w-4 h-4" />
-            </button>
-            <button onClick={(e) => { e.stopPropagation(); handleDelete(); }}>
-              <Trash2 className="w-4 h-4" />
-            </button>
-          </div>
-      )}
+      <div className={cn(
+        "absolute top-1/2 -translate-y-1/2 right-2 z-10 flex items-center space-x-2 transition-opacity",
+        isEditing ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+      )}>
+        {isEditing ? (
+            <button onClick={handleRename} className="p-1 hover:bg-neutral-700 rounded-md"><Check className="w-4 h-4" /></button>
+        ) : (
+            <>
+                <button onClick={() => setIsEditing(true)} className="p-1 hover:bg-neutral-700 rounded-md"><Pencil className="w-4 h-4" /></button>
+                <button onClick={handleDelete} className="p-1 hover:bg-neutral-700 rounded-md"><Trash2 className="w-4 h-4" /></button>
+            </>
+        )}
+      </div>
     </div>
   );
 };

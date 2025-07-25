@@ -5,8 +5,8 @@ import { Input } from "@/components/ui/input";
 import { useUser } from "@/hooks/useUser";
 import { supabase } from "@/utils/supabase/client";
 import { useState } from "react";
-import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 interface FormProps {
     chatId: string;
@@ -14,8 +14,23 @@ interface FormProps {
 
 export const Form = ({ chatId }: FormProps) => {
     const { user } = useUser();
-    const [message, setMessage] = useState<string>("");
     const router = useRouter();
+    const [message, setMessage] = useState<string>("");
+
+    const generateDummyResponse = async (currentChatId: string, currentUserId: string) => {
+        await new Promise(resolve => setTimeout(resolve, 1200));
+
+        const { error } = await supabase.from("messages").insert({
+            chat_id: currentChatId,
+            user_id: currentUserId,
+            role: "assistant",
+            content: "This is a dummy response from the chatbot. The real AI logic is not yet implemented.",
+        });
+
+        if (error) {
+            toast.error("Dummy response failed to send.");
+        }
+    };
 
     const handleSendMessage = async () => {
         if (message.trim() === "" || !user) return;
@@ -23,59 +38,53 @@ export const Form = ({ chatId }: FormProps) => {
         const tempMessage = message;
         setMessage("");
 
-        // Insert user message into Supabase
+        let currentChatId = chatId;
+
         if (chatId === 'new') {
-            // 1. Create a new chat record in the database
             const { data: newChat, error: chatError } = await supabase
                 .from('chats')
-                .insert({ user_id: user.id, title: tempMessage.substring(0, 25) }) // Use first part of message as title
+                .insert({ user_id: user.id, title: tempMessage.substring(0, 30) })
                 .select('id')
                 .single();
 
             if (chatError || !newChat) {
                 toast.error("Failed to create a new chat.");
-                setMessage(tempMessage); // Restore message on failure
+                setMessage(tempMessage);
                 return;
             }
+            
+            currentChatId = newChat.id;
 
-            // 2. Insert the first message
-            await supabase.from("messages").insert({
-                chat_id: newChat.id,
+            const { error: messageError } = await supabase.from("messages").insert({
+                chat_id: currentChatId,
                 user_id: user.id,
                 role: "user",
                 content: tempMessage,
             });
 
-            // 3. Redirect to the new, permanent chat URL
-            router.push(`/chat/${newChat.id}`);
+            if (messageError) {
+                toast.error("Failed to send message.");
+                setMessage(tempMessage);
+                return;
+            }
+            
+            router.push(`/chat/${currentChatId}`);
 
         } else {
-            const { error } = await supabase.from("messages").insert({
-                chat_id: chatId,
+            const { error: messageError } = await supabase.from("messages").insert({
+                chat_id: currentChatId,
                 user_id: user.id,
                 role: "user",
                 content: tempMessage,
             });
-
-            if (error) {
-                toast.error("Failed to send message. Please try again.");
-                setMessage(tempMessage); // Restore message on failure
+            if (messageError) {
+                toast.error("Failed to send message.");
+                setMessage(tempMessage);
                 return;
             }
         }
-
-        // --- Placeholder for AI Response ---
-        // In a real app, you would now call your AI API
-        // and then insert the assistant's response.
-        // For now, we'll simulate a response.
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        await supabase.from("messages").insert({
-            chat_id: chatId,
-            user_id: user.id, // Associate with user for RLS
-            role: "assistant",
-            content: `This is a simulated AI response to: "${tempMessage}"`,
-        });
-        // ------------------------------------
+        
+        await generateDummyResponse(currentChatId, user.id);
     };
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {

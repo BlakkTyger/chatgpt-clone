@@ -1,13 +1,14 @@
-export type GPTModel = "gpt-3.5-turbo-1106" | "gpt-4-0125-preview";
+// lib/types.ts
 
-//make it const
-export const GPTModel = {
-    GPT3: "gpt-3.5-turbo-1106",
-    GPT4: "gpt-4-0125-preview"
-} as const;
-
-export interface Profile {
-    id: string; // Should match the auth.users id
-    model: GPTModel;
-    endsOn?: number; // Subscription end date as a timestamp
+// ✨ Renamed to AIModel to be more inclusive
+export enum AIModel {
+    GPT3 = "gpt-3.5-turbo",
+    GPT4 = "gpt-4",
+    GeminiFlash = "gemini-1.5-flash-latest", // ✨ Added Gemini model
+  }
+  
+  export interface Profile {
+    id: string;
+    model: AIModel; // Use the renamed enum
+    endsOn?: number;
   }

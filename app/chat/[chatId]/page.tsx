@@ -5,7 +5,7 @@ import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/utils/supabase/client";
 import { useUser } from "@/hooks/useUser";
-import { Chat as ChatType, Message } from "@/types";
+import { Message } from "@/types";
 
 import { Form } from "./_components/form";
 import { Header } from "./_components/header";
@@ -20,10 +20,8 @@ const Chat = () => {
     const chatId = params.chatId as string;
     
     const { user } = useUser();
-    const [chat, setChat] = useState<ChatType | null>(null);
     const [messages, setMessages] = useState<Message[]>([]);
     
-    // Pagination state
     const [page, setPage] = useState(0);
     const [hasMoreMessages, setHasMoreMessages] = useState(true);
     const [isLoading, setIsLoading] = useState(true);
@@ -39,13 +37,17 @@ const Chat = () => {
             .from("messages")
             .select("*")
             .eq("chat_id", chatId)
-            .order("created_at", { ascending: false }) // Fetch newest first
+            .order("created_at", { ascending: false })
             .range(from, to);
 
         if (data) {
-            // Prepend older messages to the top of the list
-            setMessages(prev => [...data.reverse(), ...prev]);
-            // If we fetched fewer messages than we asked for, there are no more
+            // ✨ FIX: This now prevents duplicate messages from being added
+            setMessages(prev => {
+                const existingIds = new Set(prev.map(msg => msg.id));
+                const newMessages = data.filter(msg => !existingIds.has(msg.id));
+                return [...newMessages.reverse(), ...prev];
+            });
+
             if (data.length < MESSAGES_PER_PAGE) {
                 setHasMoreMessages(false);
             }
@@ -63,36 +65,25 @@ const Chat = () => {
         });
     }, [isLoadingMore, hasMoreMessages, page, fetchMessages]);
 
-    // Initial data load effect
+    // This effect handles the initial data load for the chat.
     useEffect(() => {
         if (!user || !chatId) return;
 
-        const fetchInitialData = async () => {
-            // Fetch chat metadata
-            const { data: chatData, error: chatError } = await supabase
-                .from("chats")
-                .select("*")
-                .eq("id", chatId)
-                .single();
+        // Reset state for new chat navigation
+        setMessages([]);
+        setPage(0);
+        setHasMoreMessages(true);
+        setIsLoading(true);
 
-            if (chatError || !chatData) {
-                toast.error("Chat not found or you don't have access.");
-                router.push("/");
-                return;
-            }
-            setChat(chatData);
-
-            // Fetch first page of messages
-            await fetchMessages(0);
+        fetchMessages(0).then(() => {
             setIsLoading(false);
-        };
+        });
 
-        fetchInitialData();
-    }, [chatId, user, router, fetchMessages]);
+    }, [chatId, user, fetchMessages]);
     
-    // Real-time subscription effect
+    // This effect listens for new messages in real-time.
     useEffect(() => {
-        if(!chatId) return;
+        if(!chatId || !user) return;
         
         const channel = supabase
             .channel(`chat-${chatId}`)
@@ -100,8 +91,13 @@ const Chat = () => {
                 "postgres_changes",
                 { event: "INSERT", schema: "public", table: "messages", filter: `chat_id=eq.${chatId}` },
                 (payload) => {
-                    // Append new incoming messages to the end
-                    setMessages((prevMessages) => [...prevMessages, payload.new as Message]);
+                    // Check if message is already displayed to prevent duplicates
+                    setMessages((prevMessages) => {
+                        if (prevMessages.some(msg => msg.id === payload.new.id)) {
+                            return prevMessages;
+                        }
+                        return [...prevMessages, payload.new as Message]
+                    });
                 }
             )
             .subscribe();
@@ -109,10 +105,10 @@ const Chat = () => {
         return () => {
             supabase.removeChannel(channel);
         };
-    }, [chatId]);
+    }, [chatId, user]);
 
     if (isLoading) {
-        return <div className="w-full h-full flex items-center justify-center bg-neutral-800">Loading chat...</div>;
+        return <div className="w-full h-full flex items-center justify-center bg-neutral-800 text-white">Loading chat...</div>;
     }
 
     return (

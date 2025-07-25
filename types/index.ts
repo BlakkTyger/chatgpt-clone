@@ -12,6 +12,7 @@ export interface Message {
     role: "user" | "assistant";
     content: string;
     created_at: string;
+   isLoading?: boolean; // ✨ Add this optional flag
 }
 
 // You'll likely have a user object from Supabase auth
