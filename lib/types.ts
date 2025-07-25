@@ -2,9 +2,8 @@
 
 // ✨ Renamed to AIModel to be more inclusive
 export enum AIModel {
-    GPT3 = "gpt-3.5-turbo",
-    GPT4 = "gpt-4",
-    GeminiFlash = "gemini-1.5-flash-latest", // ✨ Added Gemini model
+    GPT4 = "gpt-4.1-nano-2025-04-14",
+    GeminiFlash = "gemini-2.5-flash",
   }
   
   export interface Profile {

@@ -1,11 +1,10 @@
-// chat/[chatid]/_components/header/select-modal.tsx
 "use client";
 
 import { useApiMutation } from "@/hooks/use-api-mutation";
-import { ChevronDown, Sparkles, Zap, Gem } from "lucide-react"; // ✨ Added Gem icon
+import { ChevronDown, Sparkles, Zap, Gem } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useState, useEffect } from "react";
-import { AIModel } from "@/lib/types"; // ✨ Use renamed AIModel
+import { AIModel } from "@/lib/types";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useUser } from "@/hooks/useUser";
 import { supabase } from "@/utils/supabase/client";
@@ -15,10 +14,22 @@ export const SelectModal = () => {
     const { user, loading } = useUser();
     const [openSelect, setOpenSelect] = useState(false);
 
-    // ... (useEffect for setting default model remains the same)
+    // ✨ This effect sets a default model for new users.
+    useEffect(() => {
+        if (user && !user.user_metadata?.model) {
+            supabase.auth.updateUser({
+                data: { model: AIModel.GeminiFlash }
+            });
+        }
+    }, [user]);
 
+    // ✨ This function updates the selected model in Supabase Auth.
     const updateUserModel = async (payload: { model: AIModel }) => {
-        // ... (this function remains the same)
+        const { data, error } = await supabase.auth.updateUser({
+            data: { model: payload.model }
+        });
+        if (error) throw new Error("Failed to update model.");
+        return data;
     };
 
     const { mutate: selectModel, pending: selectModelPending } = useApiMutation(updateUserModel);
@@ -28,20 +39,16 @@ export const SelectModal = () => {
 
     const currentModel = user.user_metadata?.model || AIModel.GeminiFlash;
     
-    // ✨ Updated text display logic
     let modelVersionText;
     switch (currentModel) {
-        case AIModel.GPT3:
-            modelVersionText = "3.5";
-            break;
         case AIModel.GPT4:
-            modelVersionText = "4";
+            modelVersionText = "gpt-4.1-nano";
             break;
         case AIModel.GeminiFlash:
-            modelVersionText = "Gemini";
+            modelVersionText = "gemini-2.5-flash";
             break;
         default:
-            modelVersionText = "Gemini";
+            modelVersionText = "gemini-2.5-flash";
     }
 
     const handleClick = (model: AIModel) => {
@@ -64,32 +71,20 @@ export const SelectModal = () => {
                 <ChevronDown className="text-white/50 w-5 h-5" />
             </PopoverTrigger>
             <PopoverContent className="flex flex-col border-0 bg-neutral-700 text-white p-3 space-y-1">
-                {/* ✨ Gemini 1.5 Flash Option */}
                 <div onClick={() => handleClick(AIModel.GeminiFlash)} className="flex items-center text-start cursor-pointer rounded-md justify-start space-x-2 p-2 w-full h-full hover:bg-neutral-600">
                     <Gem className="w-6 h-6 text-blue-400" />
                     <div className="w-full">
-                        <p className="font-normal">Gemini 1.5 Flash</p>
-                        <p className="text-white/70 text-xs">Fast and efficient for most tasks.</p>
+                        <p className="font-normal">Gemini 2.5 Flash</p>
+                        <p className="text-white/70 text-xs">Best for large scale processing, low-latency, high volume tasks that require thinking, and agentic use cases</p>
                     </div>
                     <Checkbox checked={currentModel === AIModel.GeminiFlash} />
                 </div>
 
-                {/* GPT 3.5 Option */}
-                <div onClick={() => handleClick(AIModel.GPT3)} className="flex items-center text-start cursor-pointer rounded-md justify-start space-x-2 p-2 w-full h-full hover:bg-neutral-600">
-                    <Zap className="w-6 h-6" />
-                    <div className="w-full">
-                        <p className="font-normal">GPT 3.5</p>
-                        <p className="text-white/70 text-xs">Great for everyday tasks.</p>
-                    </div>
-                    <Checkbox checked={currentModel === AIModel.GPT3} />
-                </div>
-
-                {/* GPT 4 Option */}
                 <div onClick={() => handleClick(AIModel.GPT4)} className="flex items-center text-start cursor-pointer rounded-md justify-start space-x-2 p-2 w-full h-full hover:bg-neutral-600">
                     <Sparkles className="w-6 h-6" />
                     <div className="w-full">
-                        <p className="font-normal">GPT-4</p>
-                        <p className="text-white/70 text-xs">Our smartest and best model</p>
+                        <p className="font-normal">GPT 4.1 Nano</p>
+                        <p className="text-white/70 text-xs">Affordable model balancing speed and intelligence</p>
                     </div>
                     <Checkbox checked={currentModel === AIModel.GPT4} />
                 </div>
