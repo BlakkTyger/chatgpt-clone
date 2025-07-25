@@ -11,7 +11,7 @@ import { AIModel } from "@/lib/types";
 
 export interface FormProps {
     chatId: string;
-    onSendMessage: (content: string) => Promise<void>;
+    onSendMessage?: (content: string) => Promise<void>;
 }
 
 export const Form = ({ chatId }: FormProps) => {
