@@ -125,7 +125,7 @@ const Chat = () => {
                     <Form chatId={chatId} onSendMessage={function (content: string): Promise<void> {
                         throw new Error("Function not implemented.");
                     } } />
-                    <p className="w-full text-center text-xs text-neutral-400 my-2 lg:pr-[300px]">TalkGPT could make errors. Consider checking important information.</p>
+                    <p className="w-full text-center text-xs text-neutral-400 my-2 lg:pr-[300px]">ChatGPT could make errors. Consider checking important information.</p>
                 </div>
             </div>
         </div>

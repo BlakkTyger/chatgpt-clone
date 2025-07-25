@@ -152,7 +152,7 @@ export const Form = ({ chatId }: FormProps) => {
     return (
         <div className="relative px-2 sm:px-12 md:px-52 lg:pr-[500px] 2xl:px-96 w-full bg-neutral-800">
             <Input
-                placeholder={isLoading ? "AI is thinking..." : "Message TalkGPT..."}
+                placeholder={isLoading ? "AI is thinking..." : "Message ChatGPT..."}
                 className="border-[1px] border-neutral-500 ring-offset-0 focus-visible:ring-0 rounded-xl bg-inherit text-neutral-200 placeholder:text-neutral-400 h-12"
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}

@@ -14,7 +14,7 @@ const BlinkingCursor = () => (
 
 export const MessageBox = ({ message, userImageUrl }: MessageBoxProps) => {
     const isUser = message.role === "user";
-    const nameString = isUser ? "You" : "TalkGPT";
+    const nameString = isUser ? "You" : "ChatGPT";
     const imageUrl = isUser ? userImageUrl : "/logo.svg";
 
     // ✨ Format the timestamp from the message object
