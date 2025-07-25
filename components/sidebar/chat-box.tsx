@@ -1,10 +1,9 @@
-// components/sidebar/chat-box.tsx
 "use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { Check, Pencil, Trash2 } from "lucide-react"; // Changed icon for clarity
+import { Check, Pencil, Trash2 } from "lucide-react";
 import { supabase } from "@/utils/supabase/client";
 import { toast } from "sonner";
 import { Chat } from "@/types";

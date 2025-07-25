@@ -1,7 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Message } from "@/types";
 import Markdown from "./markdown";
-import { format } from "date-fns"; // ✨ Import the format function
+import { format } from "date-fns"; 
 
 interface MessageBoxProps {
     message: Message;
@@ -17,8 +17,7 @@ export const MessageBox = ({ message, userImageUrl }: MessageBoxProps) => {
     const nameString = isUser ? "You" : "ChatGPT";
     const imageUrl = isUser ? userImageUrl : "/logo.svg";
 
-    // ✨ Format the timestamp from the message object
-    const timestamp = format(new Date(message.created_at), "p"); // "p" formats to "h:mm aa" e.g., "3:06 PM"
+    const timestamp = format(new Date(message.created_at), "p"); 
 
     return (
         <div className="flex space-x-3 items-start mb-10 text-wrap">

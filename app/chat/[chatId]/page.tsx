@@ -1,4 +1,3 @@
-// app/chat/[chatId]/page.tsx
 "use client";
 
 import { useRouter, useParams } from "next/navigation";
@@ -41,7 +40,6 @@ const Chat = () => {
             .range(from, to);
 
         if (data) {
-            // ✨ FIX: This now prevents duplicate messages from being added
             setMessages(prev => {
                 const existingIds = new Set(prev.map(msg => msg.id));
                 const newMessages = data.filter(msg => !existingIds.has(msg.id));
@@ -65,11 +63,9 @@ const Chat = () => {
         });
     }, [isLoadingMore, hasMoreMessages, page, fetchMessages]);
 
-    // This effect handles the initial data load for the chat.
     useEffect(() => {
         if (!user || !chatId) return;
 
-        // Reset state for new chat navigation
         setMessages([]);
         setPage(0);
         setHasMoreMessages(true);
@@ -81,7 +77,6 @@ const Chat = () => {
 
     }, [chatId, user, fetchMessages]);
     
-    // This effect listens for new messages in real-time.
     useEffect(() => {
         if(!chatId || !user) return;
         
@@ -91,7 +86,6 @@ const Chat = () => {
                 "postgres_changes",
                 { event: "INSERT", schema: "public", table: "messages", filter: `chat_id=eq.${chatId}` },
                 (payload) => {
-                    // Check if message is already displayed to prevent duplicates
                     setMessages((prevMessages) => {
                         if (prevMessages.some(msg => msg.id === payload.new.id)) {
                             return prevMessages;

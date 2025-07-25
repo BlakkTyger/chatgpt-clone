@@ -1,4 +1,3 @@
-// components/welcome.tsx
 "use client";
 
 export const Welcome = () => {

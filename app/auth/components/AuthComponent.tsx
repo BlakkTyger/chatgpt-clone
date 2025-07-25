@@ -1,11 +1,9 @@
 "use client";
 import React from "react";
 import { Button } from "@/components/ui/button";
-//import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { supabase } from "@/utils/supabase/client";
 
 export default function AuthComponent() {
-	//const supabase = createClientComponentClient();
 
 	const handleLoginWithGithub = () => {
 		supabase.auth.signInWithOAuth({

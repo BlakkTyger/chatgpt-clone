@@ -1,4 +1,3 @@
-// app/anonymous-chat/page.tsx
 "use client";
 
 import { useRouter } from "next/navigation";
@@ -16,11 +15,8 @@ import { toast } from "sonner";
 const AnonymousChatPage = () => {
     const router = useRouter();
     const [messages, setMessages] = useState<Message[]>([]);
-    // ✨ State to manage the currently selected AI model
     const [selectedModel, setSelectedModel] = useState<AIModel>(AIModel.GeminiFlash);
     const [openSelect, setOpenSelect] = useState(false);
-
-    // ... (useEffect hooks for localStorage remain the same)
 
     const handleExit = () => {
         localStorage.removeItem("anonymous_chat");
@@ -47,10 +43,8 @@ const AnonymousChatPage = () => {
                 throw new Error("API request failed.");
             }
 
-            // ✨ Parse the JSON response instead of reading a stream
             const { response: assistantResponse } = await response.json();
 
-            // Update the UI with the final response
             setMessages(prev => prev.map(msg => 
                 msg.id === assistantPlaceholder.id 
                     ? { ...msg, content: assistantResponse, isLoading: false } 
@@ -66,7 +60,6 @@ const AnonymousChatPage = () => {
         }
     };
     
-    // ✨ Logic to display the name of the current model
     let modelVersionText;
     switch (selectedModel) {
         case AIModel.GPT4: modelVersionText = "GPT-4"; break;

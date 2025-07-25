@@ -1,8 +1,7 @@
-// hooks/use-profile.ts
 "use client";
 
 import { useEffect, useState } from "react";
-import { useUser } from "./useUser"; // Your existing user hook
+import { useUser } from "./useUser";
 import { supabase } from "@/utils/supabase/client";
 import { Profile } from "@/lib/types";
 

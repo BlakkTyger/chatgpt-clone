@@ -1,9 +1,8 @@
-// app/components/search.tsx
 "use client";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { supabase } from "@/utils/supabase/client"; // ✨ Use the correct modern Supabase client
+import { supabase } from "@/utils/supabase/client"; 
 import { useRouter } from "next/navigation";
 import React, { useRef, useState } from "react";
 import { BsRobot } from "react-icons/bs";
@@ -11,7 +10,6 @@ import { PiSealQuestionThin } from "react-icons/pi";
 import { useToast } from "@/components/ui/use-toast";
 import { stripIndent, oneLine } from "common-tags";
 
-// ✨ Define a robust type for our Q&A state
 interface QnaPair {
     id: number;
     question: string;
@@ -23,12 +21,11 @@ export default function Search() {
     const router = useRouter();
     const inputRef = useRef<HTMLInputElement>(null);
     const { toast } = useToast();
-    // ✨ Use a single state array for Q&A pairs
     const [qnaPairs, setQnaPairs] = useState<QnaPair[]>([]);
 
     const handleLogout = async () => {
         await supabase.auth.signOut();
-        router.refresh(); // Refreshes the page, middleware will redirect to /auth
+        router.refresh();
     };
 
     const toastError = (message = "Something went wrong") => {
@@ -52,7 +49,6 @@ export default function Search() {
         }
 
         try {
-            // 1. Get embedding for the question
             const embeddingResponse = await fetch("/api/embedding", {
                 method: "POST",
                 body: JSON.stringify({ text: searchText.replace(/\n/g, " ") }),
@@ -60,18 +56,16 @@ export default function Search() {
             if (!embeddingResponse.ok) throw new Error("Failed to get embedding.");
             const { embedding } = await embeddingResponse.json();
 
-            // 2. Find matching documents in Supabase
             const { data: documents, error: rpcError } = await supabase.rpc(
                 "match_documents",
                 {
                     query_embedding: embedding,
-                    match_threshold: 0.78, // Adjusted for better results
+                    match_threshold: 0.78,
                     match_count: 5,
                 }
             );
             if (rpcError) throw new Error("Failed to match documents.");
 
-            // 3. Construct context and generate an answer
             let tokenCount = 0;
             let contextText = "";
             for (const doc of documents) {
@@ -86,7 +80,6 @@ export default function Search() {
 
             const prompt = generatePrompt(contextText, searchText);
 
-            // 4. Get the final answer from the chat API
             const chatResponse = await fetch("/api/chat", {
                 method: "POST",
                 body: JSON.stringify({ prompt }),
