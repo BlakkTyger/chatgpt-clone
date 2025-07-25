@@ -9,8 +9,9 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { AIModel } from "@/lib/types";
 
-interface FormProps {
+export interface FormProps {
     chatId: string;
+    onSendMessage: (content: string) => Promise<void>;
 }
 
 export const Form = ({ chatId }: FormProps) => {

@@ -51,124 +51,32 @@ React, TypeScript, tRPC, Supabase, Drizzle ORM, Vercel, Node, LangChain, LangGra
 
 ## Backend Features
 
-1. Signup/Login/Logout Auth
+1. Global Context Management
 
-2. Settings
+2.  Chat Context Maintenance -> Mem0
 
-3. Show follow up suggestions in chats
+3.  Anonymous Session
 
-4. Memory
+4.  Timestamps
 
-5. Let ChatGPT save and use memories when responding.
+5.  Tools:
 
-6. Let ChatGPT reference recent conversations when responding.
+    1.  Vanilla
 
-7. Show saved memory
+    2.  Think Longer
 
-8. Global Context Management
+    3.  Web Search
 
-9. Chat Session Management
+    4.  Deep Research
 
-10. New Chat
+        1.  Compulsory Follow Up Questions
 
-11. Search Chats
+        2.  Agentic Orchestration Framrkwork using LangChain and LangGraph
 
-12. Chat History
+        3.  Observability on frontend (verbose like "Thinking...", "Fetching information from wikipedia" etc)
 
-13. Chat Context Maintenance -> Mem0
-
-14. Delete Chat Session
-
-15. Anonymous Session
-
-16. Chat Bubbles
-
-17. Timestamps
-
-18. Response Generation:
-
-19. Settings
-
-20. Models:
-
-21. Gemini
-
-22. Models available via Groq
-
-23. Tools:
-
-24. Vanilla
-
-25. Think Longer
-
-26. Web Search
-
-27. Deep Research
-
-28. Compulsory Follow Up Questions
-
-29. Agentic Orchestration Framrkwork using LangChain and LangGraph
-
-30. Observability on frontend (verbose like "Thinking...", "Fetching information from wikipedia" etc)
-
-31. File System Integrations (Simple Retrieval + RAG pipeline will run for these documents):
-
-32. Knowledge base (Upload Documents)
-
-33. Google Drive
-
-34. OneDrive
-
-35. Voice Input
-
-36. Generation (General)
-
-37. Input Guardrails
-
-38. Routing
-
-39. Output Guardrails
-
-40. Response Streaming
-
-41. Markdown Rendering
-
-42. Handling CodeBlocks
-
-43. Post Generation
-
-44. Copy Response
-
-45. Like/Dislike Response
-
-46. Read Aloud
-
-47. Switch Model
-
-48. Follow Up Suggestions
-
-  
-
-## Things to focus on
-
-1. Security
-
-2. Performance (Accuracy + Latency)
-
-3. Scalability
-
-4. Hosting
-
-5. Error Handling, Edge-case coverage
-
-6. Tests (Unit, Integrations)
-
-7. Documentation
-
-8. Readable and Modular Code
-
-9. Project Structure
-
-  
+6.  File System Integrations (Simple Retrieval + RAG pipeline will run for these documents):
+    1.  Knowledge base (Upload Documents)
+7.  Response Streaming
 
 ---
