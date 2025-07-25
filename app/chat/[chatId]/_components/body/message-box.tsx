@@ -1,7 +1,7 @@
-// app/chat/[chatId]/_components/body/message-box.tsx
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Message } from "@/types";
 import Markdown from "./markdown";
+import { format } from "date-fns"; // ✨ Import the format function
 
 interface MessageBoxProps {
     message: Message;
@@ -13,10 +13,12 @@ const BlinkingCursor = () => (
 );
 
 export const MessageBox = ({ message, userImageUrl }: MessageBoxProps) => {
-    // ✨ FIX: The missing variables are now declared here
     const isUser = message.role === "user";
     const nameString = isUser ? "You" : "TalkGPT";
     const imageUrl = isUser ? userImageUrl : "/logo.svg";
+
+    // ✨ Format the timestamp from the message object
+    const timestamp = format(new Date(message.created_at), "p"); // "p" formats to "h:mm aa" e.g., "3:06 PM"
 
     return (
         <div className="flex space-x-3 items-start mb-10 text-wrap">
@@ -27,7 +29,11 @@ export const MessageBox = ({ message, userImageUrl }: MessageBoxProps) => {
                 </AvatarFallback>
             </Avatar>
             <div className="max-w-[calc(100%-40px)]">
-                <h3 className="font-bold">{nameString}</h3>
+                <div className="flex items-center gap-2">
+                    <h3 className="font-bold">{nameString}</h3>
+                    {/* ✨ Display the formatted timestamp */}
+                    <p className="text-xs text-neutral-500">{timestamp}</p>
+                </div>
                 <div className="flex flex-grow flex-col gap-3 gap-y-5 text-sm text-white/90">
                     <Markdown content={message.content} />
                     {message.isLoading && <BlinkingCursor />}
