@@ -7,6 +7,7 @@ import { supabase } from "@/utils/supabase/client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { AIModel } from "@/lib/types";
 
 interface FormProps {
     chatId: string;
@@ -16,75 +17,127 @@ export const Form = ({ chatId }: FormProps) => {
     const { user } = useUser();
     const router = useRouter();
     const [message, setMessage] = useState<string>("");
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
-    const generateDummyResponse = async (currentChatId: string, currentUserId: string) => {
-        await new Promise(resolve => setTimeout(resolve, 1200));
+    const generateAIResponse = async (currentChatId: string, currentUserId: string, currentUserModel: string, userMessage: string) => {
+        try {
+            setIsLoading(true);
+            
+            // Call your API route
+            const response = await fetch('/api/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    prompt: userMessage,
+                    model: currentUserModel || AIModel.GeminiFlash
+                }),
+            });
 
-        const { error } = await supabase.from("messages").insert({
-            chat_id: currentChatId,
-            user_id: currentUserId,
-            role: "assistant",
-            content: "This is a dummy response from the chatbot. The real AI logic is not yet implemented.",
-        });
+            if (!response.ok) {
+                throw new Error('Failed to get AI response');
+            }
 
-        if (error) {
-            toast.error("Dummy response failed to send.");
+            const data = await response.json();
+            
+            if (data.error) {
+                throw new Error(data.error);
+            }
+
+            // Insert AI response into database
+            const { error } = await supabase.from("messages").insert({
+                chat_id: currentChatId,
+                user_id: currentUserId,
+                role: "assistant",
+                content: data.response,
+            });
+
+            if (error) {
+                throw new Error('Failed to save AI response');
+            }
+
+        } catch (error) {
+            console.error('AI Response Error:', error);
+            toast.error("Failed to get AI response. Please try again.");
+            
+            // Insert error message as fallback
+            await supabase.from("messages").insert({
+                chat_id: currentChatId,
+                user_id: currentUserId,
+                role: "assistant",
+                content: "Sorry, I'm having trouble responding right now. Please try again.",
+            });
+        } finally {
+            setIsLoading(false);
         }
     };
 
     const handleSendMessage = async () => {
-        if (message.trim() === "" || !user) return;
+        if (message.trim() === "" || !user || isLoading) return;
 
         const tempMessage = message;
         setMessage("");
 
-        let currentChatId = chatId;
+        try {
+            let currentChatId = chatId;
 
-        if (chatId === 'new') {
-            const { data: newChat, error: chatError } = await supabase
-                .from('chats')
-                .insert({ user_id: user.id, title: tempMessage.substring(0, 30) })
-                .select('id')
-                .single();
+            if (chatId === 'new') {
+                // Create new chat
+                const { data: newChat, error: chatError } = await supabase
+                    .from('chats')
+                    .insert({ user_id: user.id, title: tempMessage.substring(0, 30) })
+                    .select('id')
+                    .single();
 
-            if (chatError || !newChat) {
-                toast.error("Failed to create a new chat.");
-                setMessage(tempMessage);
-                return;
+                if (chatError || !newChat) {
+                    toast.error("Failed to create a new chat.");
+                    setMessage(tempMessage);
+                    return;
+                }
+
+                currentChatId = newChat.id;
+
+                // Insert user message
+                const { error: messageError } = await supabase.from("messages").insert({
+                    chat_id: currentChatId,
+                    user_id: user.id,
+                    role: "user",
+                    content: tempMessage,
+                });
+
+                if (messageError) {
+                    toast.error("Failed to send message.");
+                    setMessage(tempMessage);
+                    return;
+                }
+
+                // Navigate to the new chat
+                router.push(`/chat/${currentChatId}`);
+            } else {
+                // Insert user message for existing chat
+                const { error: messageError } = await supabase.from("messages").insert({
+                    chat_id: currentChatId,
+                    user_id: user.id,
+                    role: "user",
+                    content: tempMessage,
+                });
+
+                if (messageError) {
+                    toast.error("Failed to send message.");
+                    setMessage(tempMessage);
+                    return;
+                }
             }
-            
-            currentChatId = newChat.id;
 
-            const { error: messageError } = await supabase.from("messages").insert({
-                chat_id: currentChatId,
-                user_id: user.id,
-                role: "user",
-                content: tempMessage,
-            });
+            // Generate AI response
+            await generateAIResponse(currentChatId, user.id, user.user_metadata?.model,tempMessage);
 
-            if (messageError) {
-                toast.error("Failed to send message.");
-                setMessage(tempMessage);
-                return;
-            }
-            
-            router.push(`/chat/${currentChatId}`);
-
-        } else {
-            const { error: messageError } = await supabase.from("messages").insert({
-                chat_id: currentChatId,
-                user_id: user.id,
-                role: "user",
-                content: tempMessage,
-            });
-            if (messageError) {
-                toast.error("Failed to send message.");
-                setMessage(tempMessage);
-                return;
-            }
+        } catch (error) {
+            console.error('Send Message Error:', error);
+            toast.error("Failed to send message. Please try again.");
+            setMessage(tempMessage);
         }
-        
-        await generateDummyResponse(currentChatId, user.id);
     };
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -97,13 +150,18 @@ export const Form = ({ chatId }: FormProps) => {
     return (
         <div className="relative px-2 sm:px-12 md:px-52 lg:pr-[500px] 2xl:px-96 w-full bg-neutral-800">
             <Input
-                placeholder="Message TalkGPT..."
+                placeholder={isLoading ? "AI is thinking..." : "Message TalkGPT..."}
                 className="border-[1px] border-neutral-500 ring-offset-0 focus-visible:ring-0 rounded-xl bg-inherit text-neutral-200 placeholder:text-neutral-400 h-12"
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 onKeyDown={handleKeyDown}
-                disabled={!user}
+                disabled={!user || isLoading}
             />
+            {isLoading && (
+                <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
+                    <div className="animate-spin h-4 w-4 border-2 border-neutral-400 border-t-transparent rounded-full"></div>
+                </div>
+            )}
         </div>
     );
 };

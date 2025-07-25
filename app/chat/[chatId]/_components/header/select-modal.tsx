@@ -9,12 +9,13 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useUser } from "@/hooks/useUser";
 import { supabase } from "@/utils/supabase/client";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation"; // ✨ Import the router
 
 export const SelectModal = () => {
     const { user, loading } = useUser();
+    const router = useRouter(); // ✨ Initialize the router
     const [openSelect, setOpenSelect] = useState(false);
 
-    // ✨ This effect sets a default model for new users.
     useEffect(() => {
         if (user && !user.user_metadata?.model) {
             supabase.auth.updateUser({
@@ -23,17 +24,22 @@ export const SelectModal = () => {
         }
     }, [user]);
 
-    // ✨ This function updates the selected model in Supabase Auth.
     const updateUserModel = async (payload: { model: AIModel }) => {
         const { data, error } = await supabase.auth.updateUser({
             data: { model: payload.model }
         });
+
         if (error) throw new Error("Failed to update model.");
+        
+        // ✨ FIX: Refresh the page to load the new user data
+        router.refresh();
+
         return data;
     };
 
     const { mutate: selectModel, pending: selectModelPending } = useApiMutation(updateUserModel);
 
+    // ... (rest of the component is the same)
     if (loading) return <div className="text-sm text-white/50">Loading...</div>;
     if (!user) return <div className="text-sm text-white/50">Could not load user.</div>;
 
@@ -75,7 +81,7 @@ export const SelectModal = () => {
                     <Gem className="w-6 h-6 text-blue-400" />
                     <div className="w-full">
                         <p className="font-normal">Gemini 2.5 Flash</p>
-                        <p className="text-white/70 text-xs">Best for large scale processing, low-latency, high volume tasks that require thinking, and agentic use cases</p>
+                        <p className="text-white/70 text-xs">Google's Latest lightweight and affordable model</p>
                     </div>
                     <Checkbox checked={currentModel === AIModel.GeminiFlash} />
                 </div>
@@ -83,8 +89,8 @@ export const SelectModal = () => {
                 <div onClick={() => handleClick(AIModel.GPT4)} className="flex items-center text-start cursor-pointer rounded-md justify-start space-x-2 p-2 w-full h-full hover:bg-neutral-600">
                     <Sparkles className="w-6 h-6" />
                     <div className="w-full">
-                        <p className="font-normal">GPT 4.1 Nano</p>
-                        <p className="text-white/70 text-xs">Affordable model balancing speed and intelligence</p>
+                        <p className="font-normal">GPT-4.1-nano</p>
+                        <p className="text-white/70 text-xs">OpenAI's latest affordable model</p>
                     </div>
                     <Checkbox checked={currentModel === AIModel.GPT4} />
                 </div>
