@@ -1,6 +1,4 @@
-// app/chat/[chatId]/_components/form.tsx
 "use client";
-
 import { Input } from "@/components/ui/input";
 import { useUser } from "@/hooks/useUser";
 import { supabase } from "@/utils/supabase/client";

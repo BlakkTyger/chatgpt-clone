@@ -3,6 +3,7 @@ import { Message } from "@/types";
 import Markdown from "./markdown";
 import { format } from "date-fns"; 
 
+
 interface MessageBoxProps {
     message: Message;
     userImageUrl?: string;

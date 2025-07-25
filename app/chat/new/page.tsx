@@ -1,5 +1,4 @@
 "use client";
-
 import { Form } from "../[chatId]/_components/form";
 import { Header } from "../[chatId]/_components/header";
 import { Body } from "../[chatId]/_components/body";

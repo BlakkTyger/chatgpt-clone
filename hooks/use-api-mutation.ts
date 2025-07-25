@@ -1,5 +1,4 @@
 import { useState } from "react";
-
 export const useApiMutation = (mutationFunction: (payload: any) => Promise<any>) => {
     const [pending, setPending] = useState(false);
 

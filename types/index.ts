@@ -5,6 +5,7 @@ export interface Chat {
     title: string;
 }
 
+
 export interface Message {
     id: string;
     chat_id: string;

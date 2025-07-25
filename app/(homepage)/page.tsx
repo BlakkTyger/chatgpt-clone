@@ -4,7 +4,6 @@ import { Welcome } from "@/components/welcome";
 
 export default async function Page() {
   const supabase = await createClient();
-
   const {
     data: { session },
   } = await supabase.auth.getSession();

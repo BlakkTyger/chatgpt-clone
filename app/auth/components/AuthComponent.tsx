@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/utils/supabase/client";
 
 export default function AuthComponent() {
-
 	const handleLoginWithGithub = () => {
 		supabase.auth.signInWithOAuth({
 			provider: "github",

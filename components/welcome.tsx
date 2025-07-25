@@ -1,5 +1,4 @@
 "use client";
-
 export const Welcome = () => {
   return (
     <div className="bg-neutral-800 h-full flex flex-col items-center justify-center text-center p-4">

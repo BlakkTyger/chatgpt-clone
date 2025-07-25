@@ -1,5 +1,4 @@
 "use client";
-
 import { ScrollArea } from "@/components/ui/scorll-area";
 import { useEffect, useRef } from "react";
 import { MessageBox } from "./message-box";

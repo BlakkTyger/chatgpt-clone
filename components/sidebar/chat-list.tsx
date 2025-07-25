@@ -51,7 +51,6 @@ export const ChatList = () => {
         }
       )
       .subscribe();
-
     return () => {
       supabase.removeChannel(channel);
     };

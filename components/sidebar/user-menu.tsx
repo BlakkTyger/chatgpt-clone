@@ -1,5 +1,4 @@
 "use client";
-
 import { useUser } from "@/hooks/useUser";
 import { supabase } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";

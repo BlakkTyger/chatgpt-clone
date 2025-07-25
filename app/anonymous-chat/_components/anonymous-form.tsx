@@ -7,6 +7,7 @@ interface AnonymousFormProps {
     onSendMessage: (message: string) => Promise<void>;
 }
 
+
 export const AnonymousForm = ({ onSendMessage }: AnonymousFormProps) => {
     const [message, setMessage] = useState("");
     const [isLoading, setIsLoading] = useState(false);

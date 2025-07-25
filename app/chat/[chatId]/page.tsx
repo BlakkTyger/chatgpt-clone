@@ -5,7 +5,6 @@ import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/utils/supabase/client";
 import { useUser } from "@/hooks/useUser";
 import { Message } from "@/types";
-
 import { Form } from "./_components/form";
 import { Header } from "./_components/header";
 import { Body } from "./_components/body";

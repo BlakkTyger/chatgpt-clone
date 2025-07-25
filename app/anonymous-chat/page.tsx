@@ -60,6 +60,7 @@ const AnonymousChatPage = () => {
         }
     };
     
+    
     let modelVersionText;
     switch (selectedModel) {
         case AIModel.GPT4: modelVersionText = "GPT-4"; break;

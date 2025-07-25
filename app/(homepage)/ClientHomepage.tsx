@@ -27,7 +27,6 @@ const ClientHomepage = () => {
                 setIsCreating(false);
             }
         };
-
         createNewChat();
     }, [router, supabase]);
 

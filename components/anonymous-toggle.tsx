@@ -1,5 +1,4 @@
 "use client";
-
 import { Ghost } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Button } from "./ui/button";
