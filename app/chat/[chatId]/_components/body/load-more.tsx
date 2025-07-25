@@ -1,4 +1,3 @@
-// app/chat/[chatId]/_components/body/load-more.tsx
 "use client";
 
 import { useEffect, useRef } from "react";

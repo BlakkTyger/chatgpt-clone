@@ -1,4 +1,3 @@
-// app/(homepage)/ClientHomepage.tsx
 "use client";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -11,7 +10,6 @@ const ClientHomepage = () => {
     useEffect(() => {
         const createNewChat = async () => {
             try {
-                // Get the current user
                 const { data: { user } } = await supabase.auth.getUser();
                 
                 if (!user) {
@@ -19,17 +17,10 @@ const ClientHomepage = () => {
                     return;
                 }
 
-                // Here you would typically create a new chat in your database
-                // For now, I'm simulating the chat creation process
-                // Replace this with your actual chat creation logic
-                
-                // Simulate API call delay
                 await new Promise(resolve => setTimeout(resolve, 1000));
                 
-                // Generate a new chat ID (replace with your actual logic)
                 const chatId = crypto.randomUUID();
                 
-                // Navigate to the new chat
                 router.push(`/chat/${chatId}`);
             } catch (error) {
                 console.error("Error creating chat:", error);

@@ -1,4 +1,3 @@
-// app/chat/[chatId]/_components/body/index.tsx
 "use client";
 
 import { ScrollArea } from "@/components/ui/scorll-area";

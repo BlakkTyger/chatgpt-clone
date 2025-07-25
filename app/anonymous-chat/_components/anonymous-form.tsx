@@ -14,7 +14,6 @@ export const AnonymousForm = ({ onSendMessage }: AnonymousFormProps) => {
     const handleKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();
-            // This guard clause does NOT check for a user
             if (message.trim() === "" || isLoading) return;
 
             const tempMessage = message;

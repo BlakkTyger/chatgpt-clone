@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
 import { toast } from "sonner";
-import { AnonymousToggle } from "@/components/anonymous-toggle"; // ✨ 1. Import the toggle
+import { AnonymousToggle } from "@/components/anonymous-toggle";
 
 export const UserMenu = () => {
     const { user } = useUser();

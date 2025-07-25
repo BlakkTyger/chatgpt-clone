@@ -9,11 +9,11 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useUser } from "@/hooks/useUser";
 import { supabase } from "@/utils/supabase/client";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation"; // ✨ Import the router
+import { useRouter } from "next/navigation"; 
 
 export const SelectModal = () => {
     const { user, loading } = useUser();
-    const router = useRouter(); // ✨ Initialize the router
+    const router = useRouter(); 
     const [openSelect, setOpenSelect] = useState(false);
 
     useEffect(() => {
@@ -31,7 +31,6 @@ export const SelectModal = () => {
 
         if (error) throw new Error("Failed to update model.");
         
-        // ✨ FIX: Refresh the page to load the new user data
         router.refresh();
 
         return data;
@@ -39,7 +38,6 @@ export const SelectModal = () => {
 
     const { mutate: selectModel, pending: selectModelPending } = useApiMutation(updateUserModel);
 
-    // ... (rest of the component is the same)
     if (loading) return <div className="text-sm text-white/50">Loading...</div>;
     if (!user) return <div className="text-sm text-white/50">Could not load user.</div>;
 

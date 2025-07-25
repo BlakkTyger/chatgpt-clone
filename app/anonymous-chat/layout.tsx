@@ -1,4 +1,3 @@
-// app/anonymous-chat/layout.tsx
 export default function AnonymousChatLayout({
     children,
 }: {

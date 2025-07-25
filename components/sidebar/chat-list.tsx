@@ -1,4 +1,3 @@
-// components/sidebar/chat-list.tsx
 "use client";
 
 import { useState, useEffect } from "react";
@@ -10,12 +9,10 @@ import { Chat } from "@/types";
 
 export const ChatList = () => {
   const { chatId } = useParams();
-  // ✨ Get the loading state from the hook
   const { user, loading } = useUser();
   const [chats, setChats] = useState<Chat[]>([]);
 
   useEffect(() => {
-    // ✨ Wait until the user session is loaded
     if (loading) {
       return;
     }
@@ -25,7 +22,6 @@ export const ChatList = () => {
       return;
     }
 
-    // Initial fetch for chats
     const fetchChats = async () => {
       const { data, error } = await supabase
         .from("chats")
@@ -40,7 +36,6 @@ export const ChatList = () => {
 
     fetchChats();
 
-    // Subscribe to real-time changes
     const channel = supabase
       .channel("realtime-chats")
       .on(
@@ -57,14 +52,11 @@ export const ChatList = () => {
       )
       .subscribe();
 
-    // Cleanup subscription on component unmount
     return () => {
       supabase.removeChannel(channel);
     };
-    // ✨ Add loading to the dependency array
   }, [user, loading]);
 
-  // Updated loading and empty states
   if (loading) return <div className="p-2 text-sm text-neutral-400">Loading chats…</div>;
   if (!user) return <div className="p-2 text-sm text-neutral-400">Please sign in.</div>;
   if (chats.length === 0) return <div className="p-2 text-sm text-neutral-400">No chats yet.</div>;
