@@ -113,6 +113,7 @@ Open http://localhost:3000 in your browser to see the application.
 
 📁 Project Structure
 
+```
 .
 ├── app/
 │   ├── api/
@@ -142,7 +143,7 @@ Open http://localhost:3000 in your browser to see the application.
 |   └── index.ts/               # Databse Schema Definitions
 ├── .env.local                  # Environment variables (KEEP SECRET)
 └── middleware.ts               # Protects routes from unauthenticated access
-
+```
 
 
 ## Architecture
